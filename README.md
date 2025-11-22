@@ -90,4 +90,4 @@ Feel free to open issues or PRs!
 * **Dev:** `npm run dev`
 
 ## License
-MIT
+[LICENSE](LICENSE)
