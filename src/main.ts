@@ -4,6 +4,7 @@ import { t, setLanguage } from './lang/lang';
 import { SyncthingAPI } from './api/syncthing-api';
 import { SyncthingView, VIEW_TYPE_SYNCTHING } from './ui/view';
 import { SyncthingEventMonitor } from './services/event-monitor';
+import { IgnoreManager } from './services/ignore-manager';
 
 // Chaves do LocalStorage (Apenas para dados SENSÍVEIS ou ESPECÍFICOS do hardware)
 const LS_KEY_HOST = 'syncthing-controller-host';
@@ -73,6 +74,9 @@ export default class SyncthingController extends Plugin {
         
         // Aplica o idioma salvo no data.json
         setLanguage(this.settings.language);
+
+        const ignoreManager = new IgnoreManager(this.app);
+        await ignoreManager.ensureDefaults();
 
         this.registerView(
             VIEW_TYPE_SYNCTHING,

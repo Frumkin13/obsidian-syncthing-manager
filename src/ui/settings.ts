@@ -2,6 +2,7 @@ import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
 import SyncthingController from '../main';
 import { SyncthingAPI } from '../api/syncthing-api';
 import { t, setLanguage } from '../lang/lang';
+import { IgnoreModal } from './ignore-modal';
 
 export class SyncthingSettingTab extends PluginSettingTab {
     plugin: SyncthingController;
@@ -146,6 +147,16 @@ export class SyncthingSettingTab extends PluginSettingTab {
                 .onChange(async (value) => {
                     this.plugin.settings.modalConflict = value;
                     await this.plugin.saveSettings();
+                }));
+
+        new Setting(containerEl)
+            .setName(t('setting_ignore_name'))
+            .setDesc(t('setting_ignore_desc'))
+            .addButton(btn => btn
+                .setButtonText(t('btn_edit_ignore'))
+                .setIcon('file-minus')
+                .onClick(() => {
+                    new IgnoreModal(this.app).open();
                 }));
 
 

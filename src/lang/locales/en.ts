@@ -81,5 +81,19 @@ export default {
     diff_conflict_header: 'Conflict Version',
     diff_loading: 'Loading...',
     diff_original_missing: '(Original file not found or deleted)',
-    diff_read_error: 'Error reading file.'
+    diff_read_error: 'Error reading file.',
+
+    // Ignore (.stignore)
+    setting_ignore_name: 'Ignored Files (.stignore)',
+    setting_ignore_desc: 'Manage file patterns to exclude from syncing (e.g. workspace config).',
+    btn_edit_ignore: 'Edit .stignore',
+    
+    // Ignore Modal
+    modal_ignore_title: 'Edit .stignore',
+    modal_ignore_desc: 'Files matching these patterns will be ignored by Syncthing.',
+    header_ignore_templates: 'Add Common Patterns:',
+    btn_add_ignore: 'Add',
+    btn_save_ignore: 'Save .stignore',
+    notice_ignore_saved: 'File .stignore updated!',
+    notice_ignore_exists: 'Rule already exists.'
 };
