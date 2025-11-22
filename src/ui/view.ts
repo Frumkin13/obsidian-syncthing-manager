@@ -29,36 +29,38 @@ export class SyncthingView extends ItemView {
         container.addClass('syncthing-view-container');
 
         // 1. Conflitos
-        const conflicts = this.conflictManager.getConflicts();
-        if (conflicts.length > 0) {
-            const alertBox = container.createDiv({ cls: 'st-conflict-alert' });
-            
-            // Estilos diretos no elemento são permitidos (o erro era passar no objeto {})
-            alertBox.style.backgroundColor = 'var(--background-modifier-error)';
-            alertBox.style.color = 'var(--text-on-accent)';
-            alertBox.style.padding = '12px';
-            alertBox.style.borderRadius = '6px';
-            alertBox.style.marginBottom = '20px';
-            alertBox.style.textAlign = 'center';
-            alertBox.style.fontWeight = 'bold';
-            alertBox.style.cursor = 'pointer';
-            alertBox.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
-            
-            const iconSpan = alertBox.createSpan();
-            setIcon(iconSpan, 'alert-octagon');
-            alertBox.createSpan({ text: ` ${conflicts.length} Conflito(s) Detectado(s)!` });
-            
-            // Aqui usamos a CLASSE do CSS que você já copiou
-            alertBox.createDiv({ 
-                text: 'Clique aqui para resolver', 
-                cls: 'st-conflict-subtext' 
-            });
-            
-            alertBox.addEventListener('click', () => {
-                new ConflictModal(this.app, this.conflictManager, () => {
-                    this.render(); 
-                }).open();
-            });
+        if (this.plugin.settings.modalConflict) {
+            const conflicts = this.conflictManager.getConflicts();
+            if (conflicts.length > 0) {
+                const alertBox = container.createDiv({ cls: 'st-conflict-alert' });
+                
+                // Estilos diretos no elemento são permitidos (o erro era passar no objeto {})
+                alertBox.style.backgroundColor = 'var(--background-modifier-error)';
+                alertBox.style.color = 'var(--text-on-accent)';
+                alertBox.style.padding = '12px';
+                alertBox.style.borderRadius = '6px';
+                alertBox.style.marginBottom = '20px';
+                alertBox.style.textAlign = 'center';
+                alertBox.style.fontWeight = 'bold';
+                alertBox.style.cursor = 'pointer';
+                alertBox.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                
+                const iconSpan = alertBox.createSpan();
+                setIcon(iconSpan, 'alert-octagon');
+                alertBox.createSpan({ text: ` ${conflicts.length} Conflito(s) Detectado(s)!` });
+                
+                // Aqui usamos a CLASSE do CSS que você já copiou
+                alertBox.createDiv({ 
+                    text: 'Clique aqui para resolver', 
+                    cls: 'st-conflict-subtext' 
+                });
+                
+                alertBox.addEventListener('click', () => {
+                    new ConflictModal(this.app, this.conflictManager, () => {
+                        this.render(); 
+                    }).open();
+                });
+            }
         }
 
         // 2. Status

@@ -1,6 +1,6 @@
 import { moment } from 'obsidian';
 import en from './locales/en';
-import pt_br from './locales/pt-br';
+import pt from './locales/pt';
 
 // Estado global do idioma
 let userLanguage = 'auto';
@@ -20,9 +20,9 @@ export function t(key: keyof typeof en): string {
     }
 
     // Detecção de Português
-    if (current && current.toLowerCase().startsWith('pt_br')) {
+    if (current && current.toLowerCase().startsWith('pt')) {
         // @ts-ignore
-        return pt_br[key] || en[key];
+        return pt[key] || en[key];
     }
 
     // Padrão: Inglês

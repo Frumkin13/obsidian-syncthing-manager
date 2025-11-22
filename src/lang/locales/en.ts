@@ -47,6 +47,8 @@ export default {
     dropdown_default: 'Select a folder',
     dropdown_none: 'None selected',
     btn_search_folders: 'Search folders (uses connection settings above)',
+    setting_modal_conflict_name: 'Resolve Conflicts',
+    setting_modal_conflict_desc: 'Enables warnings for conflicts generated during synchronization in the side panel.',
 
     // Settings - Interface
     setting_status_bar_name: 'Show in Status Bar',

@@ -47,6 +47,8 @@ export default {
     dropdown_default: 'Selecione uma pasta',
     dropdown_none: 'Nenhuma selecionada',
     btn_search_folders: 'Buscar pastas (usa configurações acima)',
+    setting_modal_conflict_name: 'Resolver Conflitos',
+    setting_modal_conflict_desc: 'Habilita o aviso de conflitos gerados durante a sincronização no painel lateral.',
 
     // Settings - Interface
     setting_status_bar_name: 'Mostrar na Barra de Status',

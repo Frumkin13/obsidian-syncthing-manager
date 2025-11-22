@@ -137,6 +137,17 @@ export class SyncthingSettingTab extends PluginSettingTab {
                     console.error(error);
                 }
             }));
+        
+        new Setting(containerEl)
+            .setName(t('setting_modal_conflict_name'))
+            .setDesc(t('setting_modal_conflict_desc'))
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.modalConflict)
+                .onChange(async (value) => {
+                    this.plugin.settings.modalConflict = value;
+                    await this.plugin.saveSettings();
+                }));
+
 
         // --- INTERFACE ---
         containerEl.createEl('br');

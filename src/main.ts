@@ -26,7 +26,8 @@ export interface SyncthingPluginSettings {
     updateInterval: number;
     showStatusBar: boolean;
     showRibbonIcon: boolean;
-    language: string; // <--- Agora é global
+    language: string;
+    modalConflict: boolean;
 }
 
 const DEFAULT_SETTINGS: SyncthingPluginSettings = {
@@ -39,7 +40,8 @@ const DEFAULT_SETTINGS: SyncthingPluginSettings = {
     updateInterval: 30,
     showStatusBar: true,
     showRibbonIcon: true,
-    language: 'auto'
+    language: 'auto',
+    modalConflict: true
 }
 
 type SyncStatus = 'conectado' | 'sincronizando' | 'escutando' | 'desconectado' | 'erro' | 'desconhecido';
@@ -337,7 +339,8 @@ export default class SyncthingController extends Plugin {
             updateInterval: this.settings.updateInterval,
             showStatusBar: this.settings.showStatusBar,
             showRibbonIcon: this.settings.showRibbonIcon,
-            language: this.settings.language, // <--- SALVO NO JSON COMPARTILHADO
+            language: this.settings.language,
+            modalConflict: this.settings.modalConflict,
             
             // Placeholders para não vazar dados locais
             syncthingHost: 'device-specific',
