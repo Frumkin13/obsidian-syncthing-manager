@@ -71,19 +71,14 @@ export class SyncthingEventMonitor {
         }
     }
     
-    // ... MANTENHA O RESTO DO ARQUIVO (processEvent, updateStatusFromState, sleep) IGUAL ...
-    // Copie do arquivo anterior, a lógica de processamento de eventos não mudou.
-    
     private processEvent(event: any) {
         const targetFolder = this.plugin.settings.syncthingFolderId;
         if (!targetFolder) return;
 
-        // 1. Dispositivos
         if (event.type === 'DeviceConnected' || event.type === 'DeviceDisconnected') {
             this.plugin.atualizarContagemDispositivos();
         }
 
-        // 2. FolderCompletion
         if (event.type === 'FolderCompletion') {
             const data = event.data;
             if (data.folder === targetFolder) {
@@ -96,7 +91,6 @@ export class SyncthingEventMonitor {
             }
         }
 
-        // 3. StateChanged
         if (event.type === 'StateChanged') {
             const data = event.data;
             if (data.folder === targetFolder) {
@@ -111,7 +105,6 @@ export class SyncthingEventMonitor {
             }
         }
         
-        // 4. FolderSummary
         if (event.type === 'FolderSummary') {
              const data = event.data;
              if (data.folder === targetFolder) {

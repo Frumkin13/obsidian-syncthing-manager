@@ -44,7 +44,6 @@ export class ConflictModal extends Modal {
             const previewContainer = container.createDiv();
             const actionsContainer = container.createDiv({ cls: 'conflict-actions' });
 
-            // Botão de Comparar
             new ButtonComponent(actionsContainer)
                 .setButtonText(t('btn_compare'))
                 .setIcon('eye')
@@ -58,7 +57,6 @@ export class ConflictModal extends Modal {
 
             actionsContainer.createSpan({ attr: { style: 'flex-grow: 1;' } });
 
-            // Botão Manter Original
             new ButtonComponent(actionsContainer)
                 .setButtonText(t('btn_keep_original'))
                 .setTooltip(t('tooltip_keep_original'))
@@ -67,7 +65,6 @@ export class ConflictModal extends Modal {
                     this.refresh();
                 });
 
-            // Botão Aceitar Conflito
             new ButtonComponent(actionsContainer)
                 .setButtonText(t('btn_keep_conflict'))
                 .setCta()
@@ -83,24 +80,20 @@ export class ConflictModal extends Modal {
         container.empty();
         const diffWrapper = container.createDiv({ cls: 'st-diff-container' });
 
-        // Lado Esquerdo (Original)
         const leftBox = diffWrapper.createDiv({ cls: 'st-diff-box' });
         leftBox.createDiv({ cls: 'st-diff-header', text: t('diff_original_header') });
         const leftContent = leftBox.createDiv({ cls: 'st-diff-content st-diff-original' });
         leftContent.setText(t('diff_loading'));
 
-        // Lado Direito (Conflito)
         const rightBox = diffWrapper.createDiv({ cls: 'st-diff-box' });
         rightBox.createDiv({ cls: 'st-diff-header', text: `${t('diff_conflict_header')} (${conflict.date})` });
         const rightContent = rightBox.createDiv({ cls: 'st-diff-content st-diff-conflict' });
         rightContent.setText(t('diff_loading'));
 
         try {
-            // Lê o arquivo de conflito
             const conflictText = await this.app.vault.read(conflict.file);
             rightContent.setText(conflictText);
 
-            // Tenta achar e ler o original
             const originalPath = conflict.path.replace(conflict.file.name, conflict.baseName);
             const originalFile = this.app.vault.getAbstractFileByPath(originalPath);
 

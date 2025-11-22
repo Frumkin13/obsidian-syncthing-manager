@@ -20,12 +20,10 @@ export class IgnoreModal extends Modal {
         contentEl.createEl('h2', { text: t('modal_ignore_title') });
         contentEl.createEl('p', { text: t('modal_ignore_desc') });
 
-        // Carrega conteúdo (Agora vai funcionar graças ao fix do Adapter)
         this.content = await this.manager.readIgnoreFile();
 
         const container = contentEl.createDiv();
 
-        // --- ÁREA DE TEXTO ---
         const textArea = new TextAreaComponent(container);
         textArea.inputEl.style.width = '100%';
         textArea.inputEl.style.height = '300px';
@@ -36,27 +34,23 @@ export class IgnoreModal extends Modal {
             this.content = value;
         });
 
-        // Espaçamento
         container.createEl('br');
-
-        // --- SUGESTÕES RETRÁTEIS (<details>) ---
         
-        // Cria o container retrátil
         const details = container.createEl('details');
-        // Define o estilo inicial (fechado)
+
         details.style.border = '1px solid var(--background-modifier-border)';
         details.style.borderRadius = '5px';
         details.style.padding = '10px';
         details.style.marginBottom = '10px';
 
-        // O Título clicável
+
         const summary = details.createEl('summary', { text: t('header_ignore_templates') });
         summary.style.cursor = 'pointer';
         summary.style.fontWeight = 'bold';
         summary.style.marginBottom = '10px';
-        summary.style.outline = 'none'; // Remove borda azul de foco
+        summary.style.outline = 'none';
 
-        // O container das opções (fica dentro do details)
+
         const suggestionsContainer = details.createDiv();
 
         const patterns = [
@@ -66,7 +60,7 @@ export class IgnoreModal extends Modal {
 
         patterns.forEach(p => {
             const settingDiv = suggestionsContainer.createDiv();
-            // Usamos uma Setting simples sem borda para ficar compacto
+
             new Setting(settingDiv)
                 .setName(p.label)
                 .setDesc(p.rule)
@@ -82,7 +76,6 @@ export class IgnoreModal extends Modal {
                     }));
         });
 
-        // --- RODAPÉ ---
         
         const footer = contentEl.createDiv({ 
             attr: { style: 'display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;' }

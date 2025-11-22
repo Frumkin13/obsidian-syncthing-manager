@@ -34,7 +34,6 @@ export class SyncthingView extends ItemView {
             if (conflicts.length > 0) {
                 const alertBox = container.createDiv({ cls: 'st-conflict-alert' });
                 
-                // Estilos diretos no elemento são permitidos (o erro era passar no objeto {})
                 alertBox.style.backgroundColor = 'var(--background-modifier-error)';
                 alertBox.style.color = 'var(--text-on-accent)';
                 alertBox.style.padding = '12px';
@@ -47,11 +46,10 @@ export class SyncthingView extends ItemView {
                 
                 const iconSpan = alertBox.createSpan();
                 setIcon(iconSpan, 'alert-octagon');
-                alertBox.createSpan({ text: ` ${conflicts.length} Conflito(s) Detectado(s)!` });
+                alertBox.createSpan({ text: ` ${conflicts.length} ${t('alert_conflict_detected')}` });
                 
-                // Aqui usamos a CLASSE do CSS que você já copiou
                 alertBox.createDiv({ 
-                    text: 'Clique aqui para resolver', 
+                    text: t('alert_click_to_resolve'), 
                     cls: 'st-conflict-subtext' 
                 });
                 

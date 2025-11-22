@@ -2,29 +2,28 @@ import { moment } from 'obsidian';
 import en from './locales/en';
 import pt from './locales/pt';
 
-// Estado global do idioma
+// --- Global State ---
+
 let userLanguage = 'auto';
 
-// Função para o Main.ts definir o idioma escolhido
 export function setLanguage(lang: string) {
     userLanguage = lang;
 }
 
+// --- Translation Helper ---
+
 export function t(key: keyof typeof en): string {
     let current = userLanguage;
 
-    // Se for 'auto', perguntamos ao Obsidian qual a língua
     if (current === 'auto') {
         // @ts-ignore
         current = moment.locale(); 
     }
 
-    // Detecção de Português
     if (current && current.toLowerCase().startsWith('pt')) {
         // @ts-ignore
         return pt[key] || en[key];
     }
 
-    // Padrão: Inglês
     return en[key];
 }

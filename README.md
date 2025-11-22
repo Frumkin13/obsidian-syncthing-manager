@@ -1,94 +1,93 @@
-# Obsidian Sample Plugin
+# Syncthing Manager for Obsidian
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/gustjose/obsidian-syncthing-manager)
+![Downloads](https://img.shields.io/github/downloads/gustjose/obsidian-syncthing-manager/total)
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+**Control, monitor, and manage your Syncthing synchronization directly from Obsidian.**
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+This plugin acts as a bridge to your local Syncthing API, providing real-time status updates, a powerful conflict resolver, and tools to keep your vault healthy across Desktop and Mobile devices.
 
-## First time developing plugins?
+![Plugin Overview](docs/images/overview.png)
 
-Quick starting guide for new plugin devs:
+## ✨ Key Features
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+* **🟢 Live Status Monitoring:** Know immediately if your vault is Synced, Syncing, or Disconnected via the Status Bar (Desktop) or Side Panel (Mobile).
+* **⚔️ Conflict Resolver:** Automatically detects `.sync-conflict` files and provides a **side-by-side diff view** to compare content before deciding to keep the original or accept the conflict version.
+* **🛡️ .stignore Editor:** Easily manage ignored files (like `workspace.json` layouts) using built-in templates to prevent glitches between Mobile and Desktop.
+* **📱 Mobile Optimized:** Features a responsive **Side Panel View** designed specifically for Android workflows.
+* **🌍 Multi-language:** Fully translated into **English** and **Portuguese (Português-BR)**.
 
-## Releasing new releases
+## ⚙️ Configuration
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### 1. Get your API Key
+1.  Open Syncthing on your device.
+2.  Go to **Actions** > **Settings** > **General**.
+3.  Copy the **API Key**.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+### 2. Setup in Obsidian
+1.  Open Obsidian Settings > **Syncthing Manager**.
+2.  Paste your **API Key**.
+3.  Set the URL/Host (Default: `127.0.0.1`) and Port (Default: `8384`).
+4.  Click **Test Connection**.
+5.  **Important:** Select your **Vault Folder** from the dropdown menu to track specific events for this vault.
 
-## Adding your plugin to the community plugin list
+---
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+### 📱 Android Setup (Critical)
 
-## How to use
+To use this plugin on Android (via *Syncthing-Fork* or the official app), you must configure Syncthing to allow local HTTP connections.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+> [!WARNING]
+> **HTTPS Restriction:** Obsidian Mobile cannot connect to self-signed HTTPS certificates on localhost. You **must disable HTTPS** for the GUI in the Syncthing App settings.
 
-## Manually installing the plugin
+1.  Open the Syncthing App > **Settings** > **GUI**.
+2.  Set **GUI Listen Address** to `127.0.0.1:8384` (This restricts access to your phone only, keeping it safe).
+3.  **Disable** the "Use HTTPS for GUI" option.
+    * *Note: If the app keeps re-enabling HTTPS, ensure you have cleared the "GUI Authentication User/Password" fields, as the app enforces HTTPS if a password is set.*
+4.  Restart the Syncthing App.
+5.  In the Obsidian Plugin Settings, ensure **Use HTTPS** is **OFF**.
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+---
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint ./src/`
+## 📖 Features Guide
 
-## Funding URL
+### ⚔️ Conflict Resolution
+When a sync conflict occurs (e.g., edited the same note on two devices while offline), a red alert will appear in the Syncthing View.
 
-You can include funding URLs where people who use your plugin can financially support it.
+1.  Click the alert to open the **Conflict Resolver**.
+2.  Click **Compare Content** to see the differences side-by-side.
+3.  Choose:
+    * **Keep Original:** Deletes the conflict file.
+    * **Use This Version:** Overwrites your current note with the conflict version.
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+![Conflict Modal](docs/images/conflict.png)
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+### 🛡️ Ignoring Files (.stignore)
+To prevent Obsidian layout settings from syncing and messing up your mobile workspace:
 
-If you have multiple URLs, you can also do:
+1.  Open **Settings** > **Syncthing Manager**.
+2.  Click **Edit .stignore**.
+3.  Use the "Add Common Patterns" buttons to quickly ignore workspace configs or installer caches.
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+![Ignoring Files](docs/images/ignore_files.png)
 
-## API Documentation
+---
 
-See https://github.com/obsidianmd/obsidian-api
+## 📥 Installation
+
+### Manual / BRAT (Beta)
+1.  Install the **BRAT** plugin from the Community Store.
+2.  Add this repository URL: `https://github.com/gustjose/obsidian-syncthing-manager`.
+3.  Enable "Syncthing Manager".
+
+---
+
+## 🤝 Contributing
+
+Feel free to open issues or PRs!
+
+* **Build:** `npm run build`
+* **Dev:** `npm run dev`
+
+## License
+MIT

@@ -16,84 +16,90 @@ export default {
     
     info_last_sync: 'Último Sync',
     info_devices: 'Dispositivos Online',
-    info_folder: 'Pasta',
+    info_folder: 'Pasta Monitorada',
     btn_sync_now: 'Sincronizar Agora',
     btn_requesting: 'Solicitando...',
 
     // Settings - Headers
-    setting_header_conn: 'Conexão',
-    setting_header_folder: 'Monitoramento de Pasta',
+    setting_header_conn: 'Configurações de Conexão',
+    setting_header_folder: 'Pastas e Arquivos',
     setting_header_interface: 'Interface',
     setting_header_general: 'Geral',
 
     // Settings - General
     setting_lang_name: 'Idioma',
-    setting_lang_desc: 'Force um idioma específico ou use Automático.',
+    setting_lang_desc: 'Force a interface do plugin para um idioma específico ou siga o Obsidian.',
 
     // Settings - Connection
     setting_https_name: 'Usar HTTPS',
-    setting_https_desc: 'Ative se o Syncthing usa conexão segura (TLS). Geralmente desligado para localhost.',
+    setting_https_desc: 'IMPORTANTE: Mantenha DESATIVADO para Android/Mobile funcionar corretamente, também deve estar desativado no syncthing. Só ative se você configurou certificados TLS válidos no Desktop.',
     setting_host_name: 'Endereço IP / Host',
-    setting_host_desc: 'Padrão: 127.0.0.1 (localhost).',
+    setting_host_desc: 'O endereço onde a interface do Syncthing roda. Use "127.0.0.1" para localhost.',
     setting_port_name: 'Porta',
-    setting_port_desc: 'Padrão: 8384.',
+    setting_port_desc: 'Padrão é 8384. Verifique nas configurações do Syncthing se você alterou.',
     setting_api_name: 'Chave da API (API Key)',
-    setting_api_desc: 'Encontre em Syncthing > Ações > Configurações > Geral.',
+    setting_api_desc: 'Copie este código no Syncthing em: Ações > Configurações > Geral.',
     btn_test_conn: 'Testar Conexão',
     
     // Settings - Folder
     setting_folder_name: 'Pasta do Cofre',
-    setting_folder_desc: 'Selecione qual pasta do Syncthing corresponde a este cofre.',
-    dropdown_default: 'Selecione uma pasta',
+    setting_folder_desc: 'Selecione qual ID de pasta do Syncthing corresponde a este cofre do Obsidian para monitorar o status específico dele.',
+    dropdown_default: 'Selecione uma pasta...',
     dropdown_none: 'Nenhuma selecionada',
-    btn_search_folders: 'Buscar pastas (usa configurações acima)',
-    setting_modal_conflict_name: 'Resolver Conflitos',
-    setting_modal_conflict_desc: 'Habilita o aviso de conflitos gerados durante a sincronização no painel lateral.',
+    btn_search_folders: 'Buscar pastas no Syncthing',
+    
+    // Settings - Conflict
+    setting_modal_conflict_name: 'Detecção de Conflitos',
+    setting_modal_conflict_desc: 'Ativa a busca automática por arquivos ".sync-conflict". Um alerta vermelho aparecerá no Painel Lateral se conflitos forem encontrados.',
 
     // Settings - Interface
     setting_status_bar_name: 'Mostrar na Barra de Status',
-    setting_status_bar_desc: 'Apenas Desktop. Recarregue para aplicar.',
+    setting_status_bar_desc: 'Exibe o ícone de conexão e status no rodapé direito (Apenas Desktop). Reinicie o obsidian para aplicar.',
     setting_ribbon_name: 'Mostrar Ícone no Ribbon',
-    setting_ribbon_desc: 'Barra lateral esquerda (Desktop/Mobile). Recarregue para aplicar.',
+    setting_ribbon_desc: 'Exibe o ícone na barra lateral esquerda para acesso rápido ao painel. Reinicie o obsidian para aplicar.',
 
     // Notices / Errors
-    notice_syncing: 'Sincronizando...',
-    notice_success_conn: 'Sucesso! Conectado ao ID: ',
-    notice_fail_conn: 'Falha. Verifique IP, Porta e HTTPS.',
-    notice_error_auth: 'Erro de Autenticação.',
-    notice_offline: 'Syncthing Offline.',
-    notice_folders_found: 'pastas encontradas!',
-    notice_config_first: 'Configure a API Key primeiro.',
-    notice_searching: 'Buscando pastas...',
+    notice_syncing: 'Sincronização solicitada...',
+    notice_success_conn: 'Conexão realizada com sucesso! ID do Dispositivo: ',
+    notice_fail_conn: 'Falha na conexão. Verifique IP, Porta e se o HTTPS está desativado (especialmente no Android).',
+    notice_error_auth: 'Erro de Autenticação. Verifique sua API Key.',
+    notice_offline: 'Syncthing inacessível. O aplicativo está rodando?',
+    notice_folders_found: 'pastas encontradas.',
+    notice_config_first: 'Por favor, configure a API Key e a URL primeiro.',
+    notice_searching: 'Conectando ao Syncthing...',
 
     // Modal de Conflitos
-    modal_conflict_title: 'Resolver Conflitos',
-    modal_conflict_empty: 'Nenhum arquivo de conflito encontrado. Tudo limpo!',
-    modal_conflict_desc: 'Escolha qual versão você deseja manter.',
+    modal_conflict_title: 'Resolver Conflitos de Sync',
+    modal_conflict_empty: 'Ótimo! Nenhum arquivo de conflito encontrado no cofre.',
+    modal_conflict_desc: 'Os arquivos abaixo possuem versões conflitantes. Compare o conteúdo e escolha qual manter.',
     btn_compare: 'Comparar Conteúdo',
     btn_keep_original: 'Manter Original',
-    tooltip_keep_original: 'Apaga o arquivo de conflito (o da direita) e mantém o atual.',
-    btn_keep_conflict: 'Usar Esta Versão',
-    tooltip_keep_conflict: 'Substitui o original pelo arquivo de conflito.',
+    tooltip_keep_original: 'Apaga o arquivo de conflito (da direita) e mantém o seu arquivo atual.',
+    btn_keep_conflict: 'Usar Versão do Conflito',
+    tooltip_keep_conflict: 'Substitui o seu arquivo local pela versão do conflito (da direita).',
     
     // Visualização de Diferença
-    diff_original_header: 'Arquivo Original (Atual)',
-    diff_conflict_header: 'Versão em Conflito',
-    diff_loading: 'Carregando...',
-    diff_original_missing: '(Arquivo original não encontrado ou foi deletado)',
-    diff_read_error: 'Erro ao ler arquivo.',
+    diff_original_header: 'Arquivo Atual (Original)',
+    diff_conflict_header: 'Versão do Conflito',
+    diff_loading: 'Carregando conteúdo...',
+    diff_original_missing: '(O arquivo original foi deletado ou não encontrado)',
+    diff_read_error: 'Erro ao ler o conteúdo do arquivo.',
 
     // Ignore (.stignore)
     setting_ignore_name: 'Arquivos Ignorados (.stignore)',
-    setting_ignore_desc: 'Gerencie padrões de arquivos para excluir da sincronização (ex: configs de workspace).',
+    setting_ignore_desc: 'Edite o arquivo .stignore para impedir que arquivos específicos (como configs de workspace) sejam sincronizados, evitando bagunça de layout.',
     btn_edit_ignore: 'Editar .stignore',
     
     // Modal de Ignore
     modal_ignore_title: 'Editar .stignore',
-    modal_ignore_desc: 'Arquivos correspondentes a estes padrões serão ignorados pelo Syncthing.',
-    header_ignore_templates: 'Adicionar Padrões Comuns:',
+    modal_ignore_desc: 'Arquivos ou padrões listados abaixo serão completamente ignorados pelo Syncthing.',
+    header_ignore_templates: 'Modelos Rápidos:',
     btn_add_ignore: 'Adicionar',
-    btn_save_ignore: 'Salvar .stignore',
-    notice_ignore_saved: 'Arquivo .stignore atualizado!',
-    notice_ignore_exists: 'A regra já existe na lista.'
+    btn_save_ignore: 'Salvar Alterações',
+    notice_ignore_saved: 'Arquivo .stignore salvo com sucesso.',
+    notice_ignore_exists: 'Esta regra já está na lista.',
+
+    // Alerta de Conflito (View)
+    alert_conflict_detected: 'Conflito(s) Detectado(s)!',
+    alert_click_to_resolve: 'Clique aqui para resolver',
 };

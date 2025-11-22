@@ -1,12 +1,13 @@
-import { Plugin, Notice, WorkspaceLeaf, Platform } from 'obsidian';
+import { Plugin, Notice, WorkspaceLeaf } from 'obsidian';
 import { SyncthingSettingTab } from './ui/settings';
-import { t, setLanguage } from './lang/lang';
 import { SyncthingAPI } from './api/syncthing-api';
-import { SyncthingView, VIEW_TYPE_SYNCTHING } from './ui/view';
 import { SyncthingEventMonitor } from './services/event-monitor';
+import { SyncthingView, VIEW_TYPE_SYNCTHING } from './ui/view';
+import { t, setLanguage } from './lang/lang';
 import { IgnoreManager } from './services/ignore-manager';
 
-// Chaves do LocalStorage (Apenas para dados SENSÍVEIS ou ESPECÍFICOS do hardware)
+// --- Constants ---
+
 const LS_KEY_HOST = 'syncthing-controller-host';
 const LS_KEY_PORT = 'syncthing-controller-port';
 const LS_KEY_HTTPS = 'syncthing-controller-https';
@@ -14,8 +15,9 @@ const LS_KEY_API = 'syncthing-controller-api-key';
 const LS_KEY_FOLDER = 'syncthing-controller-folder-id';
 const LS_KEY_FOLDER_LABEL = 'syncthing-controller-folder-label';
 
+// --- Interfaces & Defaults ---
+
 export interface SyncthingPluginSettings {
-    // Dados locais (não salvos no data.json real)
     syncthingHost: string;
     syncthingPort: string;
     useHttps: boolean;
@@ -23,7 +25,6 @@ export interface SyncthingPluginSettings {
     syncthingFolderId: string;
     syncthingFolderLabel: string;
     
-    // Dados globais (sincronizados via data.json)
     updateInterval: number;
     showStatusBar: boolean;
     showRibbonIcon: boolean;
@@ -47,6 +48,8 @@ const DEFAULT_SETTINGS: SyncthingPluginSettings = {
 
 type SyncStatus = 'conectado' | 'sincronizando' | 'escutando' | 'desconectado' | 'erro' | 'desconhecido';
 
+// --- Main Class ---
+
 export default class SyncthingController extends Plugin {
     settings: SyncthingPluginSettings;
     statusBarItem: HTMLElement | null = null;
@@ -59,20 +62,15 @@ export default class SyncthingController extends Plugin {
 
     get apiUrl(): string {
         const protocol = this.settings.useHttps ? 'https://' : 'http://';
-        let host = this.settings.syncthingHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
-
-        // Correção para Android:
-        if (host === 'localhost' && Platform.isMobileApp) {
-            host = '127.0.0.1';
-        }
-
+        const host = this.settings.syncthingHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
         return `${protocol}${host}:${this.settings.syncthingPort}`;
     }
+
+    // --- Lifecycle ---
 
     async onload() {
         await this.loadSettings();
         
-        // Aplica o idioma salvo no data.json
         setLanguage(this.settings.language);
 
         const ignoreManager = new IgnoreManager(this.app);
@@ -117,37 +115,6 @@ export default class SyncthingController extends Plugin {
             callback: async () => { await this.verificarConexao(true); }
         });
 
-        this.addCommand({
-            id: 'debug-syncthing-connection',
-            name: 'Debug: Testar Conexão (Detalhado)',
-            callback: async () => {
-                // 1. Pega a URL calculada (já com a correção de IP se você aplicou)
-                const urlAlvo = this.apiUrl; 
-                
-                // 2. Mostra na tela qual URL está sendo usada
-                // Isso vai te confirmar se o "localhost" virou "127.0.0.1"
-                new Notice(`Tentando conectar em:\n${urlAlvo}`, 5000); // Fica 5s na tela
-                console.log(`[DEBUG] URL Alvo: ${urlAlvo}`);
-
-                try {
-                    // 3. Tenta fazer o request básico de status
-                    const status = await SyncthingAPI.getStatus(urlAlvo, this.settings.syncthingApiKey);
-                    
-                    // 4. Se der certo, mostra o ID do dispositivo
-                    new Notice(`✅ SUCESSO!\nConectado ao Device ID:\n${status.myID.substring(0, 10)}...`, 5000);
-                    console.log('[DEBUG] Sucesso:', status);
-                    
-                } catch (error) {
-                    // 5. Se der erro, mostra a mensagem exata do erro na tela
-                    let msgErro = 'Erro desconhecido';
-                    if (error instanceof Error) msgErro = error.message;
-                    
-                    new Notice(`❌ FALHA:\n${msgErro}`, 10000); // Fica 10s na tela
-                    console.error('[DEBUG] Erro detalhado:', error);
-                }
-            }
-        });
-
         this.monitor = new SyncthingEventMonitor(this);
         this.addSettingTab(new SyncthingSettingTab(this.app, this));
 
@@ -161,6 +128,8 @@ export default class SyncthingController extends Plugin {
     onunload() {
         if (this.monitor) this.monitor.stop();
     }
+
+    // --- View Management ---
 
     async activateView() {
         const { workspace } = this.app;
@@ -184,6 +153,8 @@ export default class SyncthingController extends Plugin {
         });
     }
 
+    // --- Business Logic ---
+
     async testarApiApenas() {
         try {
             new Notice('Ping...');
@@ -191,7 +162,6 @@ export default class SyncthingController extends Plugin {
             new Notice(`${t('notice_success_conn')} ${status.myID.substring(0, 5)}...`);
         } catch (error) {
             new Notice(t('notice_fail_conn'));
-            console.error(error);
         }
     }
 
@@ -203,7 +173,7 @@ export default class SyncthingController extends Plugin {
             this.connectedDevices = count;
             this.atualizarTodosVisuais();
         } catch (e) {
-            console.error("Erro ao buscar dispositivos:", e);
+            // Fail silently
         }
     }
 
@@ -229,7 +199,6 @@ export default class SyncthingController extends Plugin {
             );
             await this.atualizarContagemDispositivos();
         } catch (error) {
-            console.error('Erro ao forçar scan:', error);
             new Notice('Erro ao solicitar Sync.');
             this.currentStatus = 'erro';
             this.atualizarTodosVisuais();
@@ -263,7 +232,6 @@ export default class SyncthingController extends Plugin {
             this.atualizarTodosVisuais();
 
         } catch (error) {
-            console.error(error);
             if (error instanceof Error && error.message.includes('403')) {
                 this.currentStatus = 'erro';
                 if (showNotice) new Notice(t('notice_error_auth'));
@@ -274,6 +242,8 @@ export default class SyncthingController extends Plugin {
             this.atualizarTodosVisuais();
         }
     }
+
+    // --- UI Rendering ---
 
     atualizarStatusBar(status: SyncStatus) {
         this.currentStatus = status; 
@@ -313,15 +283,14 @@ export default class SyncthingController extends Plugin {
         }
     }
 
+    // --- Data Persistence ---
+
     async loadSettings() {
-        // 1. Carrega tudo do data.json (incluindo o Idioma)
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 
-        // Sanitização: Limpa placeholders antigos se ainda existirem no data.json
         if ((this.settings.syncthingHost as string) === 'device-specific') this.settings.syncthingHost = '';
         if ((this.settings.syncthingPort as string) === 'device-specific') this.settings.syncthingPort = '';
 
-        // 2. Sobrescreve APENAS os dados de conexão com o LocalStorage
         const localHost = window.localStorage.getItem(LS_KEY_HOST);
         const localPort = window.localStorage.getItem(LS_KEY_PORT);
         const localHttps = window.localStorage.getItem(LS_KEY_HTTPS);
@@ -338,7 +307,6 @@ export default class SyncthingController extends Plugin {
     }
 
     async saveSettings() {
-        // 1. Salva no data.json: Configurações GERAIS e IDIOMA
         const sharedSettings = {
             updateInterval: this.settings.updateInterval,
             showStatusBar: this.settings.showStatusBar,
@@ -346,7 +314,6 @@ export default class SyncthingController extends Plugin {
             language: this.settings.language,
             modalConflict: this.settings.modalConflict,
             
-            // Placeholders para não vazar dados locais
             syncthingHost: 'device-specific',
             syncthingPort: 'device-specific',
             useHttps: false, 
@@ -356,7 +323,6 @@ export default class SyncthingController extends Plugin {
         };
         await this.saveData(sharedSettings);
 
-        // 2. Salva no LocalStorage: Apenas dados locais e sensíveis
         window.localStorage.setItem(LS_KEY_HOST, this.settings.syncthingHost);
         window.localStorage.setItem(LS_KEY_PORT, this.settings.syncthingPort);
         window.localStorage.setItem(LS_KEY_HTTPS, String(this.settings.useHttps));
