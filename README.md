@@ -1,7 +1,12 @@
-# Syncthing Manager for Obsidian
-
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/gustjose/obsidian-syncthing-manager)
-![Downloads](https://img.shields.io/github/downloads/gustjose/obsidian-syncthing-manager/total)
+<h1 align="center">
+  Syncthing Manager for Obsidian
+</h1>
+<br>
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/gustjose/obsidian-syncthing-manager?style=for-the-badge&color=8A2BE2" alt="Latest Release">
+  <img src="https://img.shields.io/github/downloads/gustjose/obsidian-syncthing-manager/total?style=for-the-badge&color=8A2BE2" alt="Total Downloads">
+</p>
+<br>
 
 **Control, monitor, and manage your Syncthing synchronization directly from Obsidian.**
 
