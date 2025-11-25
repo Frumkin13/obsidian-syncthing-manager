@@ -30,7 +30,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
                         this.plugin.settings.syncthingHost = value;
                         await this.plugin.saveSettings();
                     });
-                text.inputEl.style.width = '100%'; 
+                text.inputEl.addClass('st-input-full-width');
             });
 
         new Setting(containerEl)
@@ -68,7 +68,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
                         await this.plugin.saveSettings();
                     });
                 text.inputEl.type = 'password';
-                text.inputEl.style.width = '100%';
+                text.inputEl.addClass('st-input-full-width');
             });
 
         api_key_Setting.addButton(button => button

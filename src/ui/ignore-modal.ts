@@ -25,9 +25,8 @@ export class IgnoreModal extends Modal {
         const container = contentEl.createDiv();
 
         const textArea = new TextAreaComponent(container);
-        textArea.inputEl.style.width = '100%';
-        textArea.inputEl.style.height = '300px';
-        textArea.inputEl.style.fontFamily = 'monospace';
+        
+        textArea.inputEl.addClass('st-textarea-code');
         textArea.setValue(this.content);
         
         textArea.onChange((value) => {
@@ -36,19 +35,13 @@ export class IgnoreModal extends Modal {
 
         container.createEl('br');
         
-        const details = container.createEl('details');
-
-        details.style.border = '1px solid var(--background-modifier-border)';
-        details.style.borderRadius = '5px';
-        details.style.padding = '10px';
-        details.style.marginBottom = '10px';
+        const details = container.createEl('details', { cls: 'st-details-box' });
 
 
-        const summary = details.createEl('summary', { text: t('header_ignore_templates') });
-        summary.style.cursor = 'pointer';
-        summary.style.fontWeight = 'bold';
-        summary.style.marginBottom = '10px';
-        summary.style.outline = 'none';
+        const summary = details.createEl('summary', { 
+            text: t('header_ignore_templates'),
+            cls: 'st-summary-title'
+        });
 
 
         const suggestionsContainer = details.createDiv();
@@ -77,9 +70,7 @@ export class IgnoreModal extends Modal {
         });
 
         
-        const footer = contentEl.createDiv({ 
-            attr: { style: 'display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;' }
-        });
+        const footer = contentEl.createDiv({ cls: 'st-modal-footer' });
 
         const btnSave = footer.createEl('button', { cls: 'mod-cta', text: t('btn_save_ignore') });
         btnSave.addEventListener('click', async () => {
