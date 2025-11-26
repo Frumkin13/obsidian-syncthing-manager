@@ -57,7 +57,6 @@ export class SyncthingView extends ItemView {
         
         const currentStatus = this.plugin.currentStatus;
         
-        // CORREÇÃO AQUI: Definimos cssClass em vez de color
         let cssClass = 'st-color-muted';
         let statusText = t('status_unknown');
 
@@ -84,7 +83,6 @@ export class SyncthingView extends ItemView {
                 break;
         }
         
-        // Agora a variável cssClass existe
         iconDiv.addClass(cssClass);
         statusBox.createDiv({ cls: 'st-status-text', text: statusText }).addClass(cssClass);
 
@@ -100,10 +98,11 @@ export class SyncthingView extends ItemView {
         const btnContainer = container.createDiv({ cls: 'st-btn-container' });
         const btn = btnContainer.createEl('button', { cls: 'mod-cta', text: t('btn_sync_now') });
         
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
             btn.setText(t('btn_requesting'));
             btn.disabled = true;
-            await this.plugin.forcarSincronizacao();
+            // Tratamento correto da Promise
+            this.plugin.forcarSincronizacao().catch(err => console.error(err));
         });
     }
 

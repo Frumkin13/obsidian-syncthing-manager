@@ -59,18 +59,20 @@ export class ConflictModal extends Modal {
             new ButtonComponent(actionsContainer)
                 .setButtonText(t('btn_keep_original'))
                 .setTooltip(t('tooltip_keep_original'))
-                .onClick(async () => {
-                    await this.manager.deleteConflict(conflict);
-                    this.refresh();
+                .onClick(() => {
+                    this.manager.deleteConflict(conflict)
+                        .then(() => this.refresh())
+                        .catch(console.error);
                 });
 
             new ButtonComponent(actionsContainer)
                 .setButtonText(t('btn_keep_conflict'))
                 .setCta()
                 .setTooltip(t('tooltip_keep_conflict'))
-                .onClick(async () => {
-                    await this.manager.acceptConflict(conflict);
-                    this.refresh();
+                .onClick(() => {
+                    this.manager.acceptConflict(conflict)
+                        .then(() => this.refresh())
+                        .catch(console.error);
                 });
         });
     }

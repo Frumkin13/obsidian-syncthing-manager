@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
 import SyncthingController from '../main';
-import { SyncthingAPI } from '../api/syncthing-api';
+import { SyncthingAPI, SyncthingFolder } from '../api/syncthing-api';
 import { t, setLanguage } from '../lang/lang';
 import { IgnoreModal } from './ignore-modal';
 
@@ -93,8 +93,9 @@ export class SyncthingSettingTab extends PluginSettingTab {
         api_key_Setting.addButton(button => button
                 .setButtonText(t('btn_test_conn'))
                 .setCta()
-                .onClick(async () => {
-                    await this.plugin.testarApiApenas();
+                .onClick(() => {
+                    // Evita erro de Promise
+                    this.plugin.testarApiApenas().catch(console.error);
                 }));
 
         // PASTA
@@ -106,8 +107,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
 
         folderSetting.addDropdown(async (dropdown) => {
             const currentId = this.plugin.settings.syncthingFolderId;
-            const currentLabel = this.plugin.settings.syncthingFolderLabel;
-            const display = currentLabel || currentId || t('dropdown_none');
+            const display = this.plugin.settings.syncthingFolderLabel || t('dropdown_none');
             dropdown.addOption(currentId, display);
             dropdown.setValue(currentId);
 
@@ -121,7 +121,8 @@ export class SyncthingSettingTab extends PluginSettingTab {
                     this.plugin.settings.syncthingFolderLabel = '';
                 }
                 await this.plugin.saveSettings();
-                this.plugin.verificarConexao(false); 
+                // Promise ignored intencionalmente
+                void this.plugin.verificarConexao(false); 
             });
         });
 
@@ -132,6 +133,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
                 try {
                     new Notice(t('notice_searching'));
                     const folders = await SyncthingAPI.getFolders(this.plugin.apiUrl, this.plugin.settings.syncthingApiKey);
+                    
                     const selectEl = folderSetting.controlEl.querySelector('select');
                     if (selectEl) selectEl.innerHTML = '';
                     
@@ -140,7 +142,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
                     optionDefault.text = t('dropdown_default');
                     selectEl?.appendChild(optionDefault);
 
-                    folders.forEach((folder: any) => {
+                    folders.forEach((folder: SyncthingFolder) => {
                         const option = document.createElement('option');
                         option.value = folder.id;
                         option.text = folder.label || folder.id;

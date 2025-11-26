@@ -1,4 +1,4 @@
-import { App, Modal, Setting, Notice, TextAreaComponent } from 'obsidian';
+import { App, Modal, Setting, Notice, TextAreaComponent, ButtonComponent } from 'obsidian';
 import { IgnoreManager } from '../services/ignore-manager';
 import { t } from '../lang/lang';
 
@@ -68,12 +68,20 @@ export class IgnoreModal extends Modal {
 
         const footer = contentEl.createDiv({ cls: 'st-modal-footer' });
 
-        const btnSave = footer.createEl('button', { cls: 'mod-cta', text: t('btn_save_ignore') });
-        btnSave.addEventListener('click', async () => {
-            await this.manager.saveIgnoreFile(this.content);
-            new Notice(t('notice_ignore_saved'));
-            this.close();
-        });
+        new ButtonComponent(footer)
+            .setButtonText(t('btn_save_ignore'))
+            .setCta()
+            .onClick(() => {
+                this.manager.saveIgnoreFile(this.content)
+                    .then(() => {
+                        new Notice(t('notice_ignore_saved'));
+                        this.close();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        new Notice('Error saving .stignore');
+                    });
+            });
     }
 
     onClose() {
