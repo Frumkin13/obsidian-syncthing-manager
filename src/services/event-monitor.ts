@@ -14,7 +14,6 @@ export class SyncthingEventMonitor {
         if (this.running) return;
         
         try {
-            // MUDANÇA AQUI: Usa o getter this.plugin.apiUrl
             const url = `${this.plugin.apiUrl}/rest/events?limit=1`;
             const response = await requestUrl({
                 url: url,
@@ -46,7 +45,6 @@ export class SyncthingEventMonitor {
                     continue;
                 }
 
-                // MUDANÇA AQUI: Usa o getter this.plugin.apiUrl
                 const url = `${this.plugin.apiUrl}/rest/events?since=${this.lastEventId}&timeout=60`;
                 
                 const response = await requestUrl({

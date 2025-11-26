@@ -26,7 +26,6 @@ export class IgnoreManager {
         if (!exists) {
             try {
                 await this.app.vault.adapter.write(this.ignoreFile, DEFAULT_IGNORE_CONTENT.trim());
-                console.log('Syncthing Controller: .stignore criado com sucesso.');
             } catch (e) {
                 console.error('Erro ao criar .stignore:', e);
             }

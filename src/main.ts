@@ -153,7 +153,7 @@ export default class SyncthingController extends Plugin {
         });
     }
 
-    // --- Helper: Construção Segura do SVG ---
+    // --- SVG ---
     
     createSyncthingIcon(colorClass: string): SVGSVGElement {
         const ns = "http://www.w3.org/2000/svg";
@@ -162,7 +162,6 @@ export default class SyncthingController extends Plugin {
         svg.classList.add("st-icon-svg"); // Classe do CSS
         if (colorClass) svg.classList.add(colorClass);
 
-        // Caminho 1 (Contorno/Exterior)
         const path1 = document.createElementNS(ns, "path");
         path1.setAttribute("d", "M161.785 101.327a66 66 0 0 1-4.462 19.076m-49.314 40.495A66 66 0 0 1 96 162a66 66 0 0 1-45.033-17.75M31.188 83.531A66 66 0 0 1 96 30a66 66 0 0 1 39.522 13.141");
         path1.setAttribute("fill", "none");
@@ -172,7 +171,6 @@ export default class SyncthingController extends Plugin {
         path1.setAttribute("stroke-linejoin", "round");
         svg.appendChild(path1);
 
-        // Caminho 2 (Nós/Interior)
         const path2 = document.createElementNS(ns, "path");
         path2.setAttribute("d", "M146.887 147.005a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm18.25-78.199a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zM118.5 105a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm-76.248 11.463a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm113.885-68.656a21 21 0 0 0-21 21 21 21 0 0 0 1.467 7.564l-14.89 11.555A21 21 0 0 0 109.5 84a21 21 0 0 0-20.791 18.057l-36.45 5.48a21 21 0 0 0-19.007-12.074 21 21 0 0 0-21 21 21 21 0 0 0 21 21 21 21 0 0 0 20.791-18.059l36.463-5.48A21 21 0 0 0 109.5 126a21 21 0 0 0 6.283-.988l5.885 8.707a21 21 0 0 0-4.781 13.287 21 21 0 0 0 21 21 21 21 0 0 0 21-21 21 21 0 0 0-6.283.986l-5.883-8.707A21 21 0 0 0 130.5 105a21 21 0 0 0-1.428-7.594l14.885-11.552a21 21 0 0 0 12.18 3.953 21 21 0 0 0 21-21 21 21 0 0 0-21-21z");
         path2.setAttribute("fill", "currentColor");
@@ -300,20 +298,16 @@ export default class SyncthingController extends Plugin {
 
         const tooltipInfo = `${text}\n\n${t('info_last_sync')}: ${this.lastSyncTime}\n${t('info_devices')}: ${this.connectedDevices}`;
         
-        // Atualiza StatusBar
         if (this.statusBarItem) {
             this.statusBarItem.empty();
             const iconSpan = this.statusBarItem.createSpan({ cls: 'status-bar-item-icon' });
             const svg = this.createSyncthingIcon(cssClass);
-            // Não precisamos definir width/height aqui, o CSS .status-bar-item-icon .st-icon-svg cuida disso
             iconSpan.appendChild(svg);
             this.statusBarItem.setAttribute('aria-label', tooltipInfo);
         }
 
-        // Atualiza Ribbon
         if (this.ribbonIconEl) {
             this.ribbonIconEl.empty();
-            // O Ribbon já tem estilo próprio para svg, mas nossa classe ajuda
             const iconContainer = this.ribbonIconEl.createDiv({ cls: 'ribbon-icon-svg' });
             const svg = this.createSyncthingIcon(cssClass);
             iconContainer.appendChild(svg);

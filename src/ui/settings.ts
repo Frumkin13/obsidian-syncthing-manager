@@ -19,7 +19,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
         new Setting(containerEl).setName('Syncthing Manager').setHeading();
 
         // GERAL
-        containerEl.createEl('h4', { text: t('setting_header_general') });
+        new Setting(containerEl).setName(t('setting_header_general')).setHeading();
 
         new Setting(containerEl)
             .setName(t('setting_lang_name'))
@@ -38,7 +38,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
             });
 
         // CONEXÃO
-        containerEl.createEl('h4', { text: t('setting_header_conn') });
+        new Setting(containerEl).setName(t('setting_header_conn')).setHeading();
 
         new Setting(containerEl)
             .setName(t('setting_host_name'))
@@ -98,8 +98,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
                 }));
 
         // PASTA
-        containerEl.createEl('br');
-        containerEl.createEl('h4', { text: t('setting_header_folder') });
+        new Setting(containerEl).setName(t('setting_header_folder')).setHeading();
 
         const folderSetting = new Setting(containerEl)
             .setName(t('setting_folder_name'))
@@ -177,8 +176,7 @@ export class SyncthingSettingTab extends PluginSettingTab {
                 }));
 
         // INTERFACE
-        containerEl.createEl('br');
-        containerEl.createEl('h4', { text: t('setting_header_interface') });
+        new Setting(containerEl).setName(t('setting_header_interface')).setHeading();
 
         new Setting(containerEl)
             .setName(t('setting_status_bar_name'))
