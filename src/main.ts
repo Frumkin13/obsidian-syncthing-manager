@@ -196,7 +196,7 @@ export default class SyncthingController extends Plugin {
         try {
             const connections = await SyncthingAPI.getConnections(this.apiUrl, this.settings.syncthingApiKey);
             const devices = connections.connections || {};
-            const count = Object.values(devices).filter((d: any) => d.connected).length;
+            const count = Object.values(devices).filter((d: { connected: boolean }) => d.connected).length;
             this.connectedDevices = count;
             this.atualizarTodosVisuais();
         } catch (e) {
@@ -320,8 +320,8 @@ export default class SyncthingController extends Plugin {
     async loadSettings() {
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 
-        if ((this.settings.syncthingHost as string) === 'device-specific') this.settings.syncthingHost = '';
-        if ((this.settings.syncthingPort as string) === 'device-specific') this.settings.syncthingPort = '';
+        if (this.settings.syncthingHost === 'device-specific') this.settings.syncthingHost = '';
+        if (this.settings.syncthingPort === 'device-specific') this.settings.syncthingPort = '';
 
         const localHost = window.localStorage.getItem(LS_KEY_HOST);
         const localPort = window.localStorage.getItem(LS_KEY_PORT);

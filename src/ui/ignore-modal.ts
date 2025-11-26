@@ -36,16 +36,12 @@ export class IgnoreModal extends Modal {
         
         const details = container.createEl('details', { cls: 'st-details-box' });
 
-        const summary = details.createEl('summary', { 
-            text: t('header_ignore_templates'),
-            cls: 'st-summary-title'
-        });
-
         const suggestionsContainer = details.createDiv();
 
+        const configDir = this.app.vault.configDir;
         const patterns = [
-            { label: 'Workspace Config', rule: '.obsidian/workspace*' },
-            { label: 'Installer Cache', rule: '.obsidian/installer.json' },
+            { label: 'Workspace Config', rule: `${configDir}/workspace*` },
+            { label: 'Installer Cache', rule: `${configDir}/installer.json` },
             { label: 'Hidden Folders', rule: '.*' },
         ];
 

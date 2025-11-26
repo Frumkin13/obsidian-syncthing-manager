@@ -37,7 +37,7 @@ export class ConflictManager {
 
     async deleteConflict(conflict: ConflictFile) {
         try {
-            await this.app.vault.trash(conflict.file, true);
+            await this.app.fileManager.trashFile(conflict.file);
             new Notice(`Conflito removido: ${conflict.file.name}`);
         } catch (e) {
             new Notice('Erro ao apagar arquivo.');
@@ -51,7 +51,7 @@ export class ConflictManager {
 
         try {
             if (originalFile && originalFile instanceof TFile) {
-                await this.app.vault.trash(originalFile, true);
+                await this.app.fileManager.trashFile(originalFile);
             }
 
             await this.app.vault.rename(conflict.file, originalPath);
