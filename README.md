@@ -20,7 +20,7 @@ This plugin acts as a bridge to your local Syncthing API, providing real-time st
 * **⚔️ Conflict Resolver:** Automatically detects `.sync-conflict` files and provides a **side-by-side diff view** to compare content before deciding to keep the original or accept the conflict version.
 * **🛡️ .stignore Editor:** Easily manage ignored files (like `workspace.json` layouts) using built-in templates to prevent glitches between Mobile and Desktop.
 * **📱 Mobile Optimized:** Features a responsive **Side Panel View** designed specifically for Android workflows.
-* **🌍 Multi-language:** Fully translated into **English** and **Portuguese (Português-BR)**.
+* **🌍 Multi-language:** Fully translated into **English**,**Portuguese (Português-BR)** and **Russian**.
 
 ## ⚙️ Configuration
 
