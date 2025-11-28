@@ -1,11 +1,28 @@
 import { requestUrl } from 'obsidian';
 import SyncthingController from '../main';
 
-// Interface para Eventos
 interface SyncthingEvent {
     id: number;
     type: string;
-    data: any;
+    data: unknown; 
+}
+
+interface FolderCompletionData {
+    folder: string;
+    completion: number;
+    needBytes: number;
+}
+
+interface StateChangedData {
+    folder: string;
+    to: string;
+}
+
+interface FolderSummaryData {
+    folder: string;
+    summary: {
+        needBytes: number;
+    };
 }
 
 export class SyncthingEventMonitor {
@@ -85,39 +102,48 @@ export class SyncthingEventMonitor {
         }
 
         if (event.type === 'FolderCompletion') {
-            const data = event.data;
-            if (data.folder === targetFolder) {
-                if (data.completion < 100 || data.needBytes > 0) {
-                    this.plugin.atualizarStatusBar('sincronizando');
-                } else {
-                    this.plugin.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    this.plugin.atualizarStatusBar('conectado');
+            const data = event.data as FolderCompletionData;
+            
+            if (data && typeof data === 'object' && 'folder' in data) {
+                if (data.folder === targetFolder) {
+                    if (data.completion < 100 || data.needBytes > 0) {
+                        this.plugin.atualizarStatusBar('sincronizando');
+                    } else {
+                        this.plugin.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        this.plugin.atualizarStatusBar('conectado');
+                    }
                 }
             }
         }
 
         if (event.type === 'StateChanged') {
-            const data = event.data;
-            if (data.folder === targetFolder) {
-                if (data.to === 'scanning' || data.to === 'syncing') {
-                    this.plugin.atualizarStatusBar('sincronizando');
-                } else if (data.to === 'idle') {
-                    this.plugin.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    this.plugin.atualizarStatusBar('conectado');
-                } else if (data.to === 'error') {
-                    this.plugin.atualizarStatusBar('erro');
+            const data = event.data as StateChangedData;
+            
+            if (data && typeof data === 'object' && 'folder' in data) {
+                if (data.folder === targetFolder) {
+                    if (data.to === 'scanning' || data.to === 'syncing') {
+                        this.plugin.atualizarStatusBar('sincronizando');
+                    } else if (data.to === 'idle') {
+                        this.plugin.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        this.plugin.atualizarStatusBar('conectado');
+                    } else if (data.to === 'error') {
+                        this.plugin.atualizarStatusBar('erro');
+                    }
                 }
             }
         }
         
         if (event.type === 'FolderSummary') {
-             const data = event.data;
-             if (data.folder === targetFolder) {
-                 if (data.summary.needBytes > 0) {
-                     this.plugin.atualizarStatusBar('sincronizando');
-                 } else {
-                     this.plugin.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                     this.plugin.atualizarStatusBar('conectado');
+             const data = event.data as FolderSummaryData;
+             
+             if (data && typeof data === 'object' && 'folder' in data) {
+                 if (data.folder === targetFolder) {
+                     if (data.summary && data.summary.needBytes > 0) {
+                         this.plugin.atualizarStatusBar('sincronizando');
+                     } else {
+                         this.plugin.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                         this.plugin.atualizarStatusBar('conectado');
+                     }
                  }
              }
         }

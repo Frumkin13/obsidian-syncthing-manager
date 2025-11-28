@@ -233,7 +233,7 @@ export default class SyncthingController extends Plugin {
             await this.atualizarContagemDispositivos();
         } catch (error) {
             console.warn("Erro ao forçar scan:", error);
-            new Notice('Erro ao solicitar Sync.');
+            new Notice('Erro!');
             this.currentStatus = 'erro';
             this.atualizarTodosVisuais();
         }

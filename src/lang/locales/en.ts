@@ -5,7 +5,7 @@ export default {
     cmd_debug_connect: 'Debug: test connection',
 
     // Ribbon Icon
-    ribbon_tooltip: 'Open Syncthing manager',
+    ribbon_tooltip: 'Open syncthing manager',
 
     // Status / View
     status_synced: 'Synced',
@@ -32,13 +32,13 @@ export default {
 
     // Settings - Connection
     setting_https_name: 'Use HTTPS',
-    setting_https_desc: 'Important: Keep this disabled for Android/mobile to work correctly. Only enable if you have configured a valid TLS certificate on your desktop.',
-    setting_host_name: 'IP address / Host',
-    setting_host_desc: 'The address where Syncthing GUI is running. Use "127.0.0.1" for localhost.',
+    setting_https_desc: 'Important: keep this disabled for android/mobile to work correctly. Only enable if you have configured a valid TLS certificate on your desktop.',
+    setting_host_name: 'IP address / host',
+    setting_host_desc: 'The address where syncthing GUI is running. Use "127.0.0.1" for localhost.',
     setting_port_name: 'Port',
-    setting_port_desc: 'Default is 8384. Check your Syncthing GUI settings if you changed it.',
+    setting_port_desc: 'Default is 8384. Check your syncthing GUI settings if you changed it.',
     setting_api_name: 'API key',
-    setting_api_desc: 'Copy this from Syncthing > Actions > Settings > General.',
+    setting_api_desc: 'Copy this from syncthing > actions > settings > general.',
     btn_test_conn: 'Test connection',
     
     // Settings - Folder
@@ -46,7 +46,7 @@ export default {
     setting_folder_desc: 'Select the Syncthing folder ID that matches this Obsidian vault to track its specific status.',
     dropdown_default: 'Select a folder...',
     dropdown_none: 'No folder selected',
-    btn_search_folders: 'Fetch folders from Syncthing',
+    btn_search_folders: 'Fetch folders from syncthing',
     
     // Settings - Conflict
     setting_modal_conflict_name: 'Conflict detection',
@@ -66,7 +66,7 @@ export default {
     notice_offline: 'Syncthing is unreachable. Is it running?',
     notice_folders_found: 'folders found.',
     notice_config_first: 'Please configure the API key and URL first.',
-    notice_searching: 'Connecting to Syncthing...',
+    notice_searching: 'Connecting to syncthing...',
 
     // Conflict Modal
     modal_conflict_title: 'Resolve sync conflicts',
@@ -82,7 +82,7 @@ export default {
     diff_original_header: 'Current file (original)',
     diff_conflict_header: 'Incoming conflict',
     diff_loading: 'Loading file content...',
-    diff_original_missing: '(Original file was deleted or not found)',
+    diff_original_missing: '(original file was deleted or not found)',
     diff_read_error: 'Error reading file content.',
 
     // Ignore (.stignore)
@@ -92,7 +92,7 @@ export default {
     
     // Ignore Modal
     modal_ignore_title: 'Edit .stignore',
-    modal_ignore_desc: 'Files or patterns listed below will be completely ignored by Syncthing.',
+    modal_ignore_desc: 'Files or patterns listed below will be completely ignored by syncthing.',
     header_ignore_templates: 'Quick add templates:',
     btn_add_ignore: 'Add',
     btn_save_ignore: 'Save changes',
