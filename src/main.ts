@@ -6,6 +6,10 @@ import { SyncthingView, VIEW_TYPE_SYNCTHING } from './ui/view';
 import { t, setLanguage } from './lang/lang';
 import { IgnoreManager } from './services/ignore-manager';
 
+interface AppWithCommands {
+    commands: { executeCommandById: (id: string) => boolean };
+}
+
 // --- Constants ---
 
 const LS_KEY_HOST = 'syncthing-controller-host';
@@ -122,7 +126,7 @@ export default class SyncthingController extends Plugin {
         await this.verificarConexao(false);
         await this.atualizarContagemDispositivos();
         
-        this.monitor.start();
+        void this.monitor.start();
     }
 
     onunload() {
@@ -153,6 +157,33 @@ export default class SyncthingController extends Plugin {
         });
     }
 
+    // --- SVG ---
+    
+    createSyncthingIcon(colorClass: string): SVGSVGElement {
+        const ns = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(ns, "svg");
+        svg.setAttribute("viewBox", "0 0 192 192");
+        svg.classList.add("st-icon-svg"); // Classe do CSS
+        if (colorClass) svg.classList.add(colorClass);
+
+        const path1 = document.createElementNS(ns, "path");
+        path1.setAttribute("d", "M161.785 101.327a66 66 0 0 1-4.462 19.076m-49.314 40.495A66 66 0 0 1 96 162a66 66 0 0 1-45.033-17.75M31.188 83.531A66 66 0 0 1 96 30a66 66 0 0 1 39.522 13.141");
+        path1.setAttribute("fill", "none");
+        path1.setAttribute("stroke", "currentColor");
+        path1.setAttribute("stroke-width", "12");
+        path1.setAttribute("stroke-linecap", "round");
+        path1.setAttribute("stroke-linejoin", "round");
+        svg.appendChild(path1);
+
+        const path2 = document.createElementNS(ns, "path");
+        path2.setAttribute("d", "M146.887 147.005a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm18.25-78.199a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zM118.5 105a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm-76.248 11.463a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm113.885-68.656a21 21 0 0 0-21 21 21 21 0 0 0 1.467 7.564l-14.89 11.555A21 21 0 0 0 109.5 84a21 21 0 0 0-20.791 18.057l-36.45 5.48a21 21 0 0 0-19.007-12.074 21 21 0 0 0-21 21 21 21 0 0 0 21 21 21 21 0 0 0 20.791-18.059l36.463-5.48A21 21 0 0 0 109.5 126a21 21 0 0 0 6.283-.988l5.885 8.707a21 21 0 0 0-4.781 13.287 21 21 0 0 0 21 21 21 21 0 0 0 21-21 21 21 0 0 0-6.283.986l-5.883-8.707A21 21 0 0 0 130.5 105a21 21 0 0 0-1.428-7.594l14.885-11.552a21 21 0 0 0 12.18 3.953 21 21 0 0 0 21-21 21 21 0 0 0-21-21z");
+        path2.setAttribute("fill", "currentColor");
+        path2.setAttribute("fill-rule", "evenodd");
+        svg.appendChild(path2);
+
+        return svg;
+    }
+
     // --- Business Logic ---
 
     async testarApiApenas() {
@@ -169,10 +200,10 @@ export default class SyncthingController extends Plugin {
         try {
             const connections = await SyncthingAPI.getConnections(this.apiUrl, this.settings.syncthingApiKey);
             const devices = connections.connections || {};
-            const count = Object.values(devices).filter((d: any) => d.connected).length;
+            const count = Object.values(devices).filter((d: { connected: boolean }) => d.connected).length;
             this.connectedDevices = count;
             this.atualizarTodosVisuais();
-        } catch (e) {
+        } catch {
             // Fail silently
         }
     }
@@ -183,8 +214,9 @@ export default class SyncthingController extends Plugin {
             return;
         }
 
-        if ((this.app as any).commands) {
-            (this.app as any).commands.executeCommandById('editor:save-file');
+        const app = this.app as unknown as AppWithCommands;
+        if (app.commands) {
+            app.commands.executeCommandById('editor:save-file');
         }
 
         new Notice(t('notice_syncing'));
@@ -248,37 +280,42 @@ export default class SyncthingController extends Plugin {
     atualizarStatusBar(status: SyncStatus) {
         this.currentStatus = status; 
         let text = t('status_unknown');
-        let color = 'var(--text-muted)';
-        let color_bg = 'currentColor'; 
+        let cssClass = 'st-color-muted'; 
 
         switch (status) {
             case 'conectado': 
-                text = t('status_synced'); color = 'var(--text-success)'; break;
+                text = t('status_synced'); 
+                cssClass = 'st-color-success'; 
+                break;
             case 'sincronizando': 
-                text = t('status_syncing'); color = 'var(--text-warning)'; break;
+                text = t('status_syncing'); 
+                cssClass = 'st-color-warning'; 
+                break;
             case 'desconectado':
-                text = t('status_offline'); color = 'var(--text-muted)'; break;
+                text = t('status_offline'); 
+                cssClass = 'st-color-muted'; 
+                break;
             case 'erro':
-                text = t('status_error'); color = 'var(--text-error)'; break;
+                text = t('status_error'); 
+                cssClass = 'st-color-error'; 
+                break;
         }
 
         const tooltipInfo = `${text}\n\n${t('info_last_sync')}: ${this.lastSyncTime}\n${t('info_devices')}: ${this.connectedDevices}`;
         
-        const customSvg = `<svg viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg" fill="none" style="width: 100%; height: 100%;"><path d="M161.785 101.327a66 66 0 0 1-4.462 19.076m-49.314 40.495A66 66 0 0 1 96 162a66 66 0 0 1-45.033-17.75M31.188 83.531A66 66 0 0 1 96 30a66 66 0 0 1 39.522 13.141" stroke="${color_bg}" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M146.887 147.005a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm18.25-78.199a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zM118.5 105a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm-76.248 11.463a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9 9 9 0 0 1 9 9zm113.885-68.656a21 21 0 0 0-21 21 21 21 0 0 0 1.467 7.564l-14.89 11.555A21 21 0 0 0 109.5 84a21 21 0 0 0-20.791 18.057l-36.45 5.48a21 21 0 0 0-19.007-12.074 21 21 0 0 0-21 21 21 21 0 0 0 21 21 21 21 0 0 0 20.791-18.059l36.463-5.48A21 21 0 0 0 109.5 126a21 21 0 0 0 6.283-.988l5.885 8.707a21 21 0 0 0-4.781 13.287 21 21 0 0 0 21 21 21 21 0 0 0 21-21 21 21 0 0 0-21-21 21 21 0 0 0-6.283.986l-5.883-8.707A21 21 0 0 0 130.5 105a21 21 0 0 0-1.428-7.594l14.885-11.552a21 21 0 0 0 12.18 3.953 21 21 0 0 0 21-21 21 21 0 0 0-21-21z" fill="currentColor" fill-rule="evenodd"/></svg>`;
-
         if (this.statusBarItem) {
             this.statusBarItem.empty();
             const iconSpan = this.statusBarItem.createSpan({ cls: 'status-bar-item-icon' });
-            iconSpan.innerHTML = customSvg.replace('style="width: 100%; height: 100%;"', 'width="20" height="20"'); 
-            this.statusBarItem.style.color = color;
+            const svg = this.createSyncthingIcon(cssClass);
+            iconSpan.appendChild(svg);
             this.statusBarItem.setAttribute('aria-label', tooltipInfo);
         }
 
         if (this.ribbonIconEl) {
             this.ribbonIconEl.empty();
             const iconContainer = this.ribbonIconEl.createDiv({ cls: 'ribbon-icon-svg' });
-            iconContainer.innerHTML = customSvg;
-            this.ribbonIconEl.style.color = color;
+            const svg = this.createSyncthingIcon(cssClass);
+            iconContainer.appendChild(svg);
             this.ribbonIconEl.setAttribute('aria-label', tooltipInfo);
         }
     }
@@ -288,8 +325,8 @@ export default class SyncthingController extends Plugin {
     async loadSettings() {
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 
-        if ((this.settings.syncthingHost as string) === 'device-specific') this.settings.syncthingHost = '';
-        if ((this.settings.syncthingPort as string) === 'device-specific') this.settings.syncthingPort = '';
+        if (this.settings.syncthingHost === 'device-specific') this.settings.syncthingHost = '';
+        if (this.settings.syncthingPort === 'device-specific') this.settings.syncthingPort = '';
 
         const localHost = window.localStorage.getItem(LS_KEY_HOST);
         const localPort = window.localStorage.getItem(LS_KEY_PORT);

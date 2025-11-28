@@ -1,7 +1,7 @@
 import { moment } from 'obsidian';
 import en from './locales/en';
 import pt from './locales/pt';
-import pt from './locales/ru';
+import ru from './locales/ru';
 
 // --- Global State ---
 
@@ -25,6 +25,12 @@ export function t(key: keyof typeof en): string {
         // @ts-ignore
         return pt[key] || en[key];
     }
+
+    if (current && current.startsWith('ru')) {
+        // @ts-ignore
+        return ru[key] || en[key];
+    }
+
 
     return en[key];
 }

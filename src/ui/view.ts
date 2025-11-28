@@ -20,7 +20,10 @@ export class SyncthingView extends ItemView {
     getDisplayText() { return 'Syncthing Controller'; }
     getIcon() { return 'refresh-cw'; }
 
-    async onOpen() { this.render(); }
+    onOpen() { 
+        this.render(); 
+        return Promise.resolve();
+    }
     async onClose() {}
 
     render() {
@@ -33,16 +36,6 @@ export class SyncthingView extends ItemView {
             const conflicts = this.conflictManager.getConflicts();
             if (conflicts.length > 0) {
                 const alertBox = container.createDiv({ cls: 'st-conflict-alert' });
-                
-                alertBox.style.backgroundColor = 'var(--background-modifier-error)';
-                alertBox.style.color = 'var(--text-on-accent)';
-                alertBox.style.padding = '12px';
-                alertBox.style.borderRadius = '6px';
-                alertBox.style.marginBottom = '20px';
-                alertBox.style.textAlign = 'center';
-                alertBox.style.fontWeight = 'bold';
-                alertBox.style.cursor = 'pointer';
-                alertBox.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
                 
                 const iconSpan = alertBox.createSpan();
                 setIcon(iconSpan, 'alert-octagon');
@@ -66,34 +59,35 @@ export class SyncthingView extends ItemView {
         const iconDiv = statusBox.createDiv({ cls: 'st-big-icon' });
         
         const currentStatus = this.plugin.currentStatus;
-        let color = 'var(--text-muted)';
+        
+        let cssClass = 'st-color-muted';
         let statusText = t('status_unknown');
 
         switch (currentStatus) {
             case 'conectado': 
-                color = 'var(--text-success)'; 
+                cssClass = 'st-color-success'; 
                 statusText = t('status_synced');
                 setIcon(iconDiv, 'check-circle');
                 break;
             case 'sincronizando': 
-                color = 'var(--text-warning)'; 
+                cssClass = 'st-color-warning'; 
                 statusText = t('status_syncing');
                 setIcon(iconDiv, 'loader');
                 break;
             case 'desconectado':
-                color = 'var(--text-muted)';
+                cssClass = 'st-color-muted';
                 statusText = t('status_offline');
                 setIcon(iconDiv, 'wifi-off');
                 break;
             case 'erro':
-                color = 'var(--text-error)';
+                cssClass = 'st-color-error';
                 statusText = t('status_error');
                 setIcon(iconDiv, 'alert-triangle');
                 break;
         }
         
-        iconDiv.style.color = color;
-        statusBox.createDiv({ cls: 'st-status-text', text: statusText }).style.color = color;
+        iconDiv.addClass(cssClass);
+        statusBox.createDiv({ cls: 'st-status-text', text: statusText }).addClass(cssClass);
 
         // 3. Tabela
         const infoContainer = container.createDiv({ cls: 'st-info-container' });
@@ -107,10 +101,10 @@ export class SyncthingView extends ItemView {
         const btnContainer = container.createDiv({ cls: 'st-btn-container' });
         const btn = btnContainer.createEl('button', { cls: 'mod-cta', text: t('btn_sync_now') });
         
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
             btn.setText(t('btn_requesting'));
             btn.disabled = true;
-            await this.plugin.forcarSincronizacao();
+            this.plugin.forcarSincronizacao().catch(err => console.error(err));
         });
     }
 
@@ -120,11 +114,7 @@ export class SyncthingView extends ItemView {
         setIcon(left.createSpan({ cls: 'st-info-icon' }), icon);
         left.createSpan({ text: label });
         
-        const valueDiv = row.createDiv({ cls: 'st-info-value', text: value });
-        valueDiv.style.maxWidth = '150px';
-        valueDiv.style.whiteSpace = 'nowrap';
-        valueDiv.style.overflow = 'hidden';
-        valueDiv.style.textOverflow = 'ellipsis';
+        row.createDiv({ cls: 'st-info-value', text: value });
     }
 
     updateView() {

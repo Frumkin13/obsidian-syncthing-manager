@@ -1,5 +1,12 @@
-import { requestUrl, Notice } from 'obsidian';
+import { requestUrl } from 'obsidian';
 import SyncthingController from '../main';
+
+// Interface para Eventos
+interface SyncthingEvent {
+    id: number;
+    type: string;
+    data: any;
+}
 
 export class SyncthingEventMonitor {
     plugin: SyncthingController;
@@ -10,11 +17,10 @@ export class SyncthingEventMonitor {
         this.plugin = plugin;
     }
 
-    async start() {
+    async start(): Promise<void> {
         if (this.running) return;
         
         try {
-            // MUDANÇA AQUI: Usa o getter this.plugin.apiUrl
             const url = `${this.plugin.apiUrl}/rest/events?limit=1`;
             const response = await requestUrl({
                 url: url,
@@ -23,7 +29,7 @@ export class SyncthingEventMonitor {
             });
 
             if (response.status === 200 && Array.isArray(response.json) && response.json.length > 0) {
-                const lastEvent = response.json[response.json.length - 1];
+                const lastEvent = response.json[response.json.length - 1] as SyncthingEvent;
                 this.lastEventId = lastEvent.id;
             }
         } catch (e) {
@@ -31,14 +37,14 @@ export class SyncthingEventMonitor {
         }
 
         this.running = true;
-        this.loop();
+        void this.loop();
     }
 
-    stop() {
+    stop(): void {
         this.running = false;
     }
 
-    private async loop() {
+    private async loop(): Promise<void> {
         while (this.running) {
             try {
                 if (!this.plugin.settings.syncthingApiKey) {
@@ -46,7 +52,6 @@ export class SyncthingEventMonitor {
                     continue;
                 }
 
-                // MUDANÇA AQUI: Usa o getter this.plugin.apiUrl
                 const url = `${this.plugin.apiUrl}/rest/events?since=${this.lastEventId}&timeout=60`;
                 
                 const response = await requestUrl({
@@ -56,7 +61,7 @@ export class SyncthingEventMonitor {
                 });
 
                 if (response.status === 200) {
-                    const events = response.json;
+                    const events = response.json as SyncthingEvent[];
                     if (Array.isArray(events) && events.length > 0) {
                         for (const event of events) {
                             this.lastEventId = event.id;
@@ -65,18 +70,18 @@ export class SyncthingEventMonitor {
                     }
                 } 
 
-            } catch (error) {
+            } catch {
                 await this.sleep(2000);
             }
         }
     }
     
-    private processEvent(event: any) {
+    private processEvent(event: SyncthingEvent) {
         const targetFolder = this.plugin.settings.syncthingFolderId;
         if (!targetFolder) return;
 
         if (event.type === 'DeviceConnected' || event.type === 'DeviceDisconnected') {
-            this.plugin.atualizarContagemDispositivos();
+            void this.plugin.atualizarContagemDispositivos();
         }
 
         if (event.type === 'FolderCompletion') {
@@ -118,7 +123,7 @@ export class SyncthingEventMonitor {
         }
     }
 
-    private sleep(ms: number) {
+    private sleep(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

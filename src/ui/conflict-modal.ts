@@ -1,4 +1,4 @@
-import { App, Modal, Setting, TFile, ButtonComponent, Notice } from 'obsidian';
+import { App, Modal, TFile, ButtonComponent } from 'obsidian';
 import { ConflictManager, ConflictFile } from '../services/conflict-manager';
 import { t } from '../lang/lang';
 
@@ -18,8 +18,7 @@ export class ConflictModal extends Modal {
         const { contentEl } = this;
         contentEl.empty();
         
-        this.modalEl.style.width = '80vw'; 
-        this.modalEl.style.maxWidth = '1000px';
+        this.modalEl.addClass('st-modal-wide');
 
         contentEl.createEl('h2', { text: `${t('modal_conflict_title')} (${this.conflicts.length})` });
 
@@ -35,7 +34,7 @@ export class ConflictModal extends Modal {
             
             container.createEl('h4', { 
                 text: conflict.baseName, 
-                attr: { style: 'margin-bottom: 5px;' } 
+                cls: 'st-conflict-title'
             });
             
             container.createEl('div', { text: `Data: ${conflict.date}`, cls: 'conflict-meta' });
@@ -55,23 +54,25 @@ export class ConflictModal extends Modal {
                     await this.renderContentPreview(previewContainer, conflict);
                 });
 
-            actionsContainer.createSpan({ attr: { style: 'flex-grow: 1;' } });
+            actionsContainer.createSpan({ cls: 'st-flex-grow' });
 
             new ButtonComponent(actionsContainer)
                 .setButtonText(t('btn_keep_original'))
                 .setTooltip(t('tooltip_keep_original'))
-                .onClick(async () => {
-                    await this.manager.deleteConflict(conflict);
-                    this.refresh();
+                .onClick(() => {
+                    this.manager.deleteConflict(conflict)
+                        .then(() => this.refresh())
+                        .catch(console.error);
                 });
 
             new ButtonComponent(actionsContainer)
                 .setButtonText(t('btn_keep_conflict'))
                 .setCta()
                 .setTooltip(t('tooltip_keep_conflict'))
-                .onClick(async () => {
-                    await this.manager.acceptConflict(conflict);
-                    this.refresh();
+                .onClick(() => {
+                    this.manager.acceptConflict(conflict)
+                        .then(() => this.refresh())
+                        .catch(console.error);
                 });
         });
     }
